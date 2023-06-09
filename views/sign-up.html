@@ -16,7 +16,7 @@
                 <div class="column is-half">
                     <form id="sign-up-form">
                         <div class="field">
-                            <h1 class="title is-1">BookHub</h1>
+                            <h1 class="title is-1">BookHub - Sign Up</h1>
                             <div id="show-message" class="field"></div>
                             <div class="field">
                                 <div class="control">
@@ -51,7 +51,7 @@
                     </form>
                 </div>
             </div>
-            
+          
         </div>
     </section>
 
@@ -78,10 +78,13 @@
                         <p>Success</p>
                         <button class="delete" aria-label="delete"></button>
                     </div>
-                    <div class="message-body">You signed up. Please continue to Login.</div>
+                    <div class="message-body">You signed up. Redirecting for login in 3 seconds....</div>
                     `
                     success.appendChild(article);
                     const message = document.querySelector('.message');
+                    setTimeout(() => {
+                      document.location = '/sign-in'
+                    }, 3000);
                     document.querySelector('.delete').addEventListener('click', (e) => {
                         e.preventDefault();
                         message.remove();

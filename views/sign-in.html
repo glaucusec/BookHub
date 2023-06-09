@@ -14,11 +14,12 @@
         <div class="container">
             <div class="columns is-centered">
                 <div class="column is-half">
-                    <form action="/signup">
+                    <form id="sign-in-form">
                         <div class="field">
-                            <h1 class="title is-1">Login</h1>
+                            <h1 class="title is-1">BookHub - Sign In</h1>
+                            <div id="show-message" class="field"></div>
                             <p class="control has-icons-left has-icons-right">
-                              <input class="input" type="email" placeholder="Email">
+                              <input class="input" type="email" placeholder="Email" name="email">
                               <span class="icon is-small is-left">
                                 <i class="fas fa-envelope"></i>
                               </span>
@@ -29,7 +30,7 @@
                           </div>
                           <div class="field">
                             <p class="control has-icons-left">
-                              <input class="input" type="password" placeholder="Password">
+                              <input class="input" type="password" placeholder="Password" name="password">
                               <span class="icon is-small is-left">
                                 <i class="fas fa-lock"></i>
                               </span>
@@ -37,7 +38,7 @@
                           </div>
                           <div class="field">
                             <p class="control">
-                              <button class="button is-success">
+                              <button id='sign-in-button' class="button is-success">
                                 Login
                               </button>
                             </p>
@@ -48,6 +49,78 @@
             
         </div>
     </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      const form = document.querySelector('#sign-in-form');
+      const button = document.querySelector('#sign-in-button');
+      const success = document.querySelector('#show-message');
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        axios.post('/sign-in', formData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        // .then(res => document.location.href = '/dashboard')
+        .then(res => {
+          if( res.status === 200 && res.data.success ) {
+            let article = document.createElement('article');
+            article.classList.add('message', 'is-success');
+            article.innerHTML = 
+            `
+            <div class="message-header">
+                <p>Success</p>
+                <button class="delete" aria-label="delete"></button>
+            </div>
+            <div class="message-body">Logged In. Redirecting to Home in 3 seconds....</div>
+            `
+            success.appendChild(article);
+            const message = document.querySelector('.message');
+            setTimeout(() => {
+              document.location = '/dashboard'
+            }, 3000);
+            document.querySelector('.delete').addEventListener('click', (e) => {
+                e.preventDefault();
+                message.remove();
+            })
+          }
+        })
+        .catch(err => {
+          let article = document.createElement('article');
+          if(err.response.status == 401) {
+              article.classList.add('message', 'is-warning');
+              article.innerHTML = 
+            `
+              <div class="message-header">
+                  <p>Invalid Credentials</p>
+                  <button class="delete" aria-label="delete"></button>
+              </div>
+              <div class="message-body">Email or Password does not  match. Try again....</div>
+            `
+            } else {
+              article.classList.add('message', 'is-danger');
+              article.innerHTML = 
+              `
+              <div class="message-header">
+                  <p>Internal Sever Error</p>
+                  <button class="delete" aria-label="delete"></button>
+              </div>
+              <div class="message-body">Try logging after some time.</div>
+            `
+            }
+            success.appendChild(article);
+            const message = document.querySelector('.message');
+            document.querySelector('.delete').addEventListener('click', (e) => {
+                e.preventDefault();
+                message.remove();
+            })
+
+            
+        });
+      })
+    </script>
     
 </body>
 </html>

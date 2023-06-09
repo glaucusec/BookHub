@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Book</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-half">
+                    <h1 class="title">Add Book</h1>
+                    <div id="show-message" class="field"></div>
+                    <form id="add-book-form">
+                        <div class="field">
+                            <label class="label">Name</label>
+                            <div class="control">
+                              <input class="input" type="text" placeholder="Book Name" name="book-name">
+                            </div>
+                          </div>
+
+                          <div class="field">
+                            <label class="label">Price</label>
+                            <div class="control">
+                              <input class="input" type="text" placeholder="Book Price" name="book-price">
+                            </div>
+                          </div>
+
+                          <div class="field">
+                            <label class="label">Description</label>
+                            <div class="control">
+                              <textarea class="textarea" placeholder="Book Description" name="book-desc"></textarea>
+                            </div>
+                          </div>
+
+                          <div class="field is-grouped">
+                            <div class="control">
+                              <button id="add-book-button" class="button is-primary ">Submit</button>
+                            </div>
+                            <div class="control">
+                              <button id="cancel-button" class="button is-danger is-light">Cancel</button>
+                            </div>
+                          </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const form = document.querySelector('#add-book-form');
+        const submitButton = document.querySelector('#add-book-button');
+        const cancelButton = document.querySelector('#cancel-button');
+        const success = document.querySelector('#show-message');
+
+        submitButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            axios.post('add-book', formData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                if(res.data.message && res.status == 200) {
+                    let article = document.createElement('article');
+                    article.classList.add('message', 'is-success')
+                    article.innerHTML = 
+                    `
+                    <div class="message-header">
+                        <p>Success</p>
+                        <button class="delete" aria-label="delete"></button>
+                    </div>
+                    <div class="message-body">You signed up. Redirecting for login in 3 seconds....</div>
+                    `
+                    success.appendChild(article);
+                    const message = document.querySelector('.message');
+                    document.querySelector('.delete').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        message.remove();
+                        document.location = '/dashboard';
+                    })
+                }
+            })
+            .catch(err => console.log(err));
+        })
+
+        cancelButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.location = '/dashboard';
+        }) 
+    </script>
+</body>
+</html>

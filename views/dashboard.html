@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+</head>
+<body>
+    <section class="section">
+        <nav class="navbar" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+              <a class="navbar-item is-size-5" href="https://bulma.io">
+                <p class="has-text-weight-bold is-size-4">BookHub</p>
+              </a>
+          
+              <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+              </a>
+            </div>
+
+            <div id="navbarBasicExample" class="navbar-menu">
+                <div class="navbar-start">
+                  <a class="navbar-item" href="/add-book">
+                    <button class="button is-primary">Add Book</button>
+                  </a>
+            
+                  <a class="navbar-item">
+                    <button class="button is-primary">My Books</button>
+                  </a>  
+                </div>
+            
+            
+                <div class="navbar-end">
+                    <div class="navbar-item">
+                        <div class="buttons">
+                            <a class="button is-primary">
+                              <strong>My Profile</strong>
+                            </a>
+                            <a id="log-out-button" class="button is-danger">
+                              Log out
+                            </a>
+                          </div>
+                    </div>
+            
+                </div>
+            </div>
+              
+        </nav>
+    </section>
+    <section class="section">
+        
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const logoutButton = document.querySelector('#log-out-button');
+        logoutButton.addEventListener('click', (e) => {
+            axios.post('/sign-out') 
+                .then(res => {
+                    if( res.status === 200 && res.data.message ) {
+                        // document.cookie = 'session_sid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    }
+                })
+        })
+    </script>
+</body>
+</html>
