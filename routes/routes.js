@@ -8,9 +8,15 @@ router.get('/', controller.landingPage);
 
 router.get('/dashboard', authenticate.authenticate, controller.dashBoard);
 
+router.get('/books', authenticate.authenticate, controller.listedBooks)
+
 router.get('/add-book', authenticate.authenticate, controller.addBookPage);
 
-router.post('/add-book', authenticate.authenticate, controller.addBook)
+router.post('/add-book', authenticate.authenticate, controller.addBook);
+
+router.get('/my-books', authenticate.authenticate, controller.myBooksPage);
+
+router.post('/my-books', authenticate.authenticate, controller.myBooks);
 
 router.get('/sign-in', controller.signInPage);
 

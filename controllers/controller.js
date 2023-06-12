@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const rootDir = require('../util/path')
 
 const User = require('../models/user');
+const Book = require('../models/book');
 
 const viewController = {
 
@@ -17,16 +18,42 @@ const viewController = {
     },
 
     addBook: async (req, res, next) => {
-        const { name, price, desc } = req.body.book;
+        const { name, price, desc, author } = req.body.book;
         try {
-            await req.user.createBook({name: name, description: desc, price: price})
+            await req.user.createBook({name: name, description: desc, price: price, author: author})
             res.status(200).json({success:true})
         } catch(err) {
             console.log(err);
             res.status(500).json({ success:false });
         }
-        
+    },
 
+    listedBooks: async(req, res, next) => {
+        try {
+            const listed_books = await Book.findAll({
+                attributes: ['name', 'description', 'price', 'author']
+            })
+            res.status(200).json(listed_books);
+        } catch(err) {
+            console.log(err)
+            res.status(404).json({'message': false})
+        }
+    },
+
+    myBooks: async(req, res, next) => {
+        try {
+            const booksCreatedByUser = await req.user.getBooks( {
+                attributes: ['name', 'description', 'price', 'author']
+            })
+            res.status(200).json(booksCreatedByUser);
+        } catch(err) {
+            console.log(err)
+            res.status(404).json({'message': false})
+        }
+    },
+
+    myBooksPage: (req, res, next) => {
+        res.sendFile(path.join(rootDir, 'views', 'my-books.html'));
     },
 
     landingPage: (req, res, next) => {

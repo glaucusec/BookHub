@@ -7,6 +7,7 @@ exports.authenticate = async (req, res, next) => {
       try {
          const userInfo = await User.findByPk(req.session.user.id)
          if(userInfo) { req.user = userInfo }
+         console.log(`authenticated UserID: ${req.user.id}`)
          next();
       } catch(err) {
          console.log(err);

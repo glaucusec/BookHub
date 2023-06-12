@@ -23,6 +23,13 @@
                           </div>
 
                           <div class="field">
+                            <label class="label">Author</label>
+                            <div class="control">
+                              <input class="input" type="text" placeholder="Author Name" name="book-author">
+                            </div>
+                          </div>
+
+                          <div class="field">
                             <label class="label">Price</label>
                             <div class="control">
                               <input class="input" type="text" placeholder="Book Price" name="book-price">
@@ -66,7 +73,8 @@
                 }
             })
             .then(res => {
-                if(res.data.message && res.status == 200) {
+       
+                if(res.data.success && res.status == 200) {
                     let article = document.createElement('article');
                     article.classList.add('message', 'is-success')
                     article.innerHTML = 
@@ -75,7 +83,7 @@
                         <p>Success</p>
                         <button class="delete" aria-label="delete"></button>
                     </div>
-                    <div class="message-body">You signed up. Redirecting for login in 3 seconds....</div>
+                    <div class="message-body">Book Added Succesfully</div>
                     `
                     success.appendChild(article);
                     const message = document.querySelector('.message');

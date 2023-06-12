@@ -25,6 +25,10 @@ const Book = sequelize.define('book', {
         type: Sequelize.FLOAT,
         allowNull: false
     },
+    author: {
+        type: Sequelize.STRING,
+        allowNull: false
+    }
 
 }, {
     timestamps: false
