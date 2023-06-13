@@ -9,112 +9,209 @@
 
 </head>
 <body>
-    <section class="section">
-        <nav class="navbar" role="navigation" aria-label="main navigation">
-            <div class="navbar-brand">
-              <a class="navbar-item is-size-5" href="https://bulma.io">
-                <p class="has-text-weight-bold is-size-4">BookHub</p>
-              </a>
-          
-              <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-              </a>
-            </div>
-
-            <div id="navbarBasicExample" class="navbar-menu">
-                <div class="navbar-start">
-                  <a class="navbar-item" href="/add-book">
-                    <button class="button is-primary">Add Book</button>
-                  </a>
-            
-                  <a class="navbar-item" href="/my-books">
-                    <button class="button is-primary">My Books</button>
-                  </a>  
-                </div>
-            
-            
-                <div class="navbar-end">
-                    <div class="navbar-item">
-                        <div class="buttons">
-                            <a class="button is-primary">
-                              <strong>My Profile</strong>
-                            </a>
-                            <a id="log-out-button" class="button is-danger">
-                              Log out
-                            </a>
-                          </div>
-                    </div>
-            
-                </div>
-            </div>
-              
-        </nav>
+    <section id="header" class="section">
     </section>
+
     <section class="section">
         <div id="books-list" class="columns is-multiline">
-          
         </div>
     </section>
 
+    <div id="modal" class="modal">
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        // showProductDetails function
+        async function showProductDetails(bookId) {
+          const modal = document.querySelector('#modal');
+
+          const book = await axios.post('/book-details', { bookId: bookId }, { headers: { 'Content-Type': 'application/json' } })
+
+          // Background div
+          const background = document.createElement('div');
+          background.classList.add('modal-background');
+
+          // Header section
+          const headerp = document.createElement('p');
+          headerp.classList.add('modal-card-title')
+          headerp.innerText = 'Details';
+          const headerb = document.createElement('button');
+          headerb.classList.add('delete')
+          headerb.id = 'close-button';
+
+          const headersection = document.createElement('header');
+          headersection.classList.add('modal-card-head')
+          headersection.appendChild(headerp);
+          headersection.appendChild(headerb);
+          // Body section
+          const bodysection = document.createElement('section');
+          bodysection.classList.add('modal-card-body');
+          const name = document.createElement('p')
+          name.classList.add('title');
+          name.innerText = book.data.name;
+          const price = document.createElement('p')
+          price.classList.add('has-text-weight-bold')
+          price.innerText = `Price: ${book.data.price} `;
+          const desc = document.createElement('p')
+          desc.innerText = book.data.description;
+          const author = document.createElement('p');
+          author.classList.add('has-text-weight-bold')
+          author.innerText = `Author: ${book.data.author}`;
+          bodysection.appendChild(name);
+          bodysection.appendChild(price);
+          bodysection.appendChild(desc);
+          bodysection.appendChild(author);
+          // Footer section
+          const footersection = document.createElement('footer');
+          footersection.classList.add('modal-card-foot');
+
+          const modalCard = document.createElement('div');
+          modalCard.classList.add('modal-card');
+          modalCard.appendChild(headersection);
+          modalCard.appendChild(headersection);
+          modalCard.appendChild(bodysection);
+          modalCard.appendChild(footersection);
+          
+          modal.appendChild(background);
+          modal.appendChild(modalCard);
+          modal.classList.add('is-active');
+          
+          const closeBtn = document.querySelector('#close-button');
+          closeBtn.addEventListener('click', () => {
+            modal.classList.remove('is-active')
+            document.querySelector('#modal').innerHTML = '';
+          })
+        }
+
+        // Get the header section and add to the page.
+        async function loadHeader() {
+          try {
+            const headerResponse = await axios.get('/header');
+            const header = headerResponse.data
+            document.querySelector('#header').innerHTML = header
+
+            const logoutButton = document.querySelector('#log-out-button');
+            logoutButton.addEventListener('click', async(e) => {
+              try {
+                const logoutResponse = await axios.post('/sign-out');
+                if(logoutResponse.status && logoutResponse.data.message) {
+
+                }
+              } catch(err) {
+                console.log('logoutError', err);
+              }
+            });
+          } catch(err) {
+            console.log(err);
+          }
+        }
+
         const booksList = document.querySelector('#books-list');
+        async function loadDashboard() {
+          try {
+            const dashboard = await axios.get('/books');
+            dashboard.data.forEach(book => {
+              const bookCol = document.createElement('div')
+              bookCol.classList.add('column', 'is-3');
+              const bookCard = document.createElement('card');
+              // Book Heading
+              const bookHeading = document.createElement('header')
+              bookHeading.classList.add('card-header')
+              const bookName = document.createElement('p');
+              bookName.classList.add('card-header-title');
+              bookName.innerText = book.name
+              bookHeading.appendChild(bookName);
+              // Book Description
+              const bookDesc = document.createElement('div');
+              bookDesc.classList.add('card-content');
+              const bookDescContent = document.createElement('div');
+              bookDescContent.classList.add('content');
+              bookDescContent.innerText = book.description.slice(0, 100) + '...';
+              bookDesc.appendChild(bookDescContent);
+              // Book Buttons
+              const Buttons = document.createElement('footer');
+              Buttons.classList.add('card-footer');
+              // View the book Details of the book
+              const viewButton = document.createElement('a');
+              viewButton.classList.add('card-footer-item');
+              viewButton.innerText = 'Show Details'
+              viewButton.addEventListener('click', (e) => {
+                const bookId = book.id;
+                e.preventDefault();
+                showProductDetails(bookId);
+              })
+              Buttons.appendChild(viewButton);
+              // Buy the Book button
+              const buyButton = document.createElement('a');
+              buyButton.classList.add('card-footer-item');
+              buyButton.innerText = 'Buy';
+              Buttons.appendChild(buyButton)
+              
 
-        const logoutButton = document.querySelector('#log-out-button');
-        logoutButton.addEventListener('click', (e) => {
-            axios.post('/sign-out') 
-                .then(res => {
-                    if( res.status === 200 && res.data.message ) {
-                        // document.cookie = 'session_sid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                    }
-                })
-        })
+              bookCard.appendChild(bookHeading);
+              bookCard.appendChild(bookDesc);
+              bookCard.appendChild(Buttons);
+              bookCol.appendChild(bookCard);
+              booksList.appendChild(bookCol);
+            });
+          } catch(err) {
+          console.log(err)
+        }
+      }
+      
+        
+        loadHeader();
+        loadDashboard();
 
+      
         // get the listed books
-        axios.get('/books')
-        .then(res => res.data.forEach(book => {
-          const bookCol = document.createElement('div')
-          bookCol.classList.add('column', 'is-3');
-          const bookCard = document.createElement('card');
-          // Book Heading
-          const bookHeading = document.createElement('header')
-          bookHeading.classList.add('card-header')
-          const bookName = document.createElement('p');
-          bookName.classList.add('card-header-title');
-          bookName.innerText = book.name
-          bookHeading.appendChild(bookName);
-          // Book Description
-          const bookDesc = document.createElement('div');
-          bookDesc.classList.add('card-content');
-          const bookDescContent = document.createElement('div');
-          bookDescContent.classList.add('content');
-          bookDescContent.innerText = book.description.slice(0, 100) + '...';
-          bookDesc.appendChild(bookDescContent);
-          // Book Buttons
-          const Buttons = document.createElement('footer');
-          Buttons.classList.add('card-footer');
-          // View the book Details of the book
-          const viewButton = document.createElement('a');
-          viewButton.classList.add('card-footer-item');
-          viewButton.innerText = 'Show Details'
-          Buttons.appendChild(viewButton);
-          // Buy the Book button
-          const buyButton = document.createElement('a');
-          buyButton.classList.add('card-footer-item');
-          buyButton.innerText = 'Buy';
-          Buttons.appendChild(buyButton)
+        // axios.get('/books')
+        // .then(res => res.data.forEach(book => {
+        //   const bookCol = document.createElement('div')
+        //   bookCol.classList.add('column', 'is-3');
+        //   const bookCard = document.createElement('card');
+        //   // Book Heading
+        //   const bookHeading = document.createElement('header')
+        //   bookHeading.classList.add('card-header')
+        //   const bookName = document.createElement('p');
+        //   bookName.classList.add('card-header-title');
+        //   bookName.innerText = book.name
+        //   bookHeading.appendChild(bookName);
+        //   // Book Description
+        //   const bookDesc = document.createElement('div');
+        //   bookDesc.classList.add('card-content');
+        //   const bookDescContent = document.createElement('div');
+        //   bookDescContent.classList.add('content');
+        //   bookDescContent.innerText = book.description.slice(0, 100) + '...';
+        //   bookDesc.appendChild(bookDescContent);
+        //   // Book Buttons
+        //   const Buttons = document.createElement('footer');
+        //   Buttons.classList.add('card-footer');
+        //   // View the book Details of the book
+        //   const viewButton = document.createElement('a');
+        //   viewButton.classList.add('card-footer-item');
+        //   viewButton.innerText = 'Show Details'
+        //   viewButton.addEventListener('click', () => {
+        //     alert('i');
+        //   })
+        //   Buttons.appendChild(viewButton);
+        //   // Buy the Book button
+        //   const buyButton = document.createElement('a');
+        //   buyButton.classList.add('card-footer-item');
+        //   buyButton.innerText = 'Buy';
+        //   Buttons.appendChild(buyButton)
           
 
-          bookCard.appendChild(bookHeading);
-          bookCard.appendChild(bookDesc);
-          bookCard.appendChild(Buttons);
-          bookCol.appendChild(bookCard);
-          booksList.appendChild(bookCol);
+        //   bookCard.appendChild(bookHeading);
+        //   bookCard.appendChild(bookDesc);
+        //   bookCard.appendChild(Buttons);
+        //   bookCol.appendChild(bookCard);
+        //   booksList.appendChild(bookCol);
 
 
-        }))
-        .catch(err => console.log(err));
+        // }))
+        // .catch(err => console.log(err));
     </script>
 </body>
 </html>

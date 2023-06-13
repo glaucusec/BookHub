@@ -31,7 +31,7 @@ const viewController = {
     listedBooks: async(req, res, next) => {
         try {
             const listed_books = await Book.findAll({
-                attributes: ['name', 'description', 'price', 'author']
+                attributes: ['id', 'name', 'description', 'price', 'author']
             })
             res.status(200).json(listed_books);
         } catch(err) {
@@ -50,6 +50,23 @@ const viewController = {
             console.log(err)
             res.status(404).json({'message': false})
         }
+    },
+
+    bookDetails: async(req, res, next) => {
+        try {
+            const bookId = req.body.bookId;
+            const bookDetails = await Book.findOne({
+                where: { id: bookId }
+            })
+            res.status(200).json(bookDetails);
+        } catch(err) {
+            console.log(err)
+            res.status(404).json({ message: 'not found'})
+        }
+    },
+
+    headerPage: (req, res, next) => {
+        res.sendFile(path.join(rootDir, 'views', 'header.html'));
     },
 
     myBooksPage: (req, res, next) => {

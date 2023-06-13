@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 </head>
 <body>
+    <section id="header" class="section">
+      
+    </section>
     <section class="section">
         <div class="container">
             <div class="columns is-centered">
@@ -58,7 +61,17 @@
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <script>
+
+        async function loadData() {
+            const headerResponse = await axios.get('/header');
+            const header = headerResponse.data
+            document.querySelector('#header').innerHTML = header
+        }
+        loadData();
+
+
         const form = document.querySelector('#add-book-form');
         const submitButton = document.querySelector('#add-book-button');
         const cancelButton = document.querySelector('#cancel-button');
