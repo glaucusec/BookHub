@@ -43,13 +43,21 @@ const viewController = {
     myBooks: async(req, res, next) => {
         try {
             const booksCreatedByUser = await req.user.getBooks( {
-                attributes: ['name', 'description', 'price', 'author']
+                attributes: ['id', 'name', 'description', 'price', 'author']
             })
             res.status(200).json(booksCreatedByUser);
         } catch(err) {
             console.log(err)
             res.status(404).json({'message': false})
         }
+    },
+
+    editBook: async(req, res, next) => {
+        const { name, price, author, description } = req.body;
+        await req.user.setBook({
+            name: name, price: price, author: author, description: description
+        })
+        console.log('suces')
     },
 
     bookDetails: async(req, res, next) => {

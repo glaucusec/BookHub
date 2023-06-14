@@ -18,6 +18,8 @@ router.get('/my-books', authenticate.authenticate, controller.myBooksPage);
 
 router.post('/my-books', authenticate.authenticate, controller.myBooks);
 
+router.post('/edit-book', authenticate.authenticate, controller.editBook);
+
 router.post('/book-details', controller.bookDetails);
 
 router.get('/header', controller.headerPage);

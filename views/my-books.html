@@ -17,6 +17,9 @@
         </div>
     </section>
 
+    <div id="modal" class="modal">
+    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
@@ -27,6 +30,108 @@
             document.querySelector('#header').innerHTML = header
         }
         loadData();
+
+        function createInputs(element, name, value) {
+            const field = document.createElement('div');
+            field.classList.add('field')
+            const label = document.createElement('label');
+            label.classList.add('label');
+            label.innerText = name;
+            const control = document.createElement('div');
+            control.classList.add('control')
+            const input = document.createElement(element);
+            input.classList.add(element)
+            input.name = name.toLowerCase();
+            input.type = 'text';
+            input.value = value;
+            control.appendChild(input);
+            field.appendChild(label);
+            field.appendChild(control);
+            return field;
+        }
+        // show the Edit form to edit the details
+        async function showEditSection(bookId) {
+            const modal = document.querySelector('#modal');
+            const book = await axios.post('/book-details', { bookId: bookId }, { headers: { 'Content-Type': 'application/json' } })
+
+            const background = document.createElement('div');
+            background.classList.add('modal-background');
+            // Header section
+            const headerp = document.createElement('p');
+            headerp.classList.add('modal-card-title')
+            headerp.innerText = `Edit Book - ${book.data.name}`
+            const headerb = document.createElement('button');
+            headerb.classList.add('delete');
+            headerb.id = 'close-button';
+            
+            const headersection = document.createElement('header');
+            headersection.classList.add('modal-card-head');
+            headersection.appendChild(headerp);
+            headersection.appendChild(headerb);
+            // Body section
+            const bodysection = document.createElement('section');
+            bodysection.classList.add('modal-card-body');
+            const form = document.createElement('form');
+            form.id = 'edit-form';
+            // book-name field
+            const namefield = createInputs('input', 'Name', book.data.name);
+            // book-price field
+            const pricefield = createInputs('input', 'Price', book.data.price);
+            // book-author field
+            const authorfield = createInputs('input', 'Author', book.data.author);
+            // book desc field
+            const descfield = createInputs('textarea', 'Description', book.data.description);
+            // submit button
+            const submitfield = document.createElement('field');
+            submitfield.classList.add('field');
+            const submitcontrol = document.createElement('control');
+            const submitbutton = document.createElement('button');
+            submitbutton.classList.add('button', 'is-link');
+            submitbutton.innerText = 'Submit'
+            submitbutton.id = 'submit-button';
+            submitcontrol.appendChild(submitbutton);
+            submitfield.appendChild(submitcontrol);
+
+            form.appendChild(namefield)
+            form.appendChild(pricefield)
+            form.appendChild(authorfield)
+            form.appendChild(descfield);
+            form.appendChild(submitfield);
+
+            bodysection.appendChild(form);
+
+            // footer section
+            const footersection = document.createElement('footer');
+            footersection.classList.add('modal-card-foot');
+
+            // creating the modal and appending to modal
+            const modalCard = document.createElement('div');
+            modalCard.classList.add('modal-card');
+            modalCard.appendChild(headersection);
+            modalCard.appendChild(bodysection);
+            modalCard.appendChild(footersection);
+
+            modal.appendChild(background);
+            modal.appendChild(modalCard);
+            modal.classList.add('is-active');
+
+            const closeBtn = document.querySelector('#close-button');
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('is-active')
+                document.querySelector('#modal').innerHTML = '';
+            })
+            const submitBtn = document.querySelector('#submit-button');
+            submitBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const editForm = document.querySelector('#edit-form')
+                const editFormData = new FormData(editForm);
+                axios.post('/edit-book', editFormData, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+            })
+        }
 
         const booksList = document.querySelector('#books-list');
 
@@ -53,15 +158,19 @@
           const Buttons = document.createElement('footer');
           Buttons.classList.add('card-footer');
           // View the book Details of the book
-          const viewButton = document.createElement('a');
-          viewButton.classList.add('card-footer-item');
-          viewButton.innerText = 'Show Details'
-          Buttons.appendChild(viewButton);
+          const editButton = document.createElement('a');
+          editButton.classList.add('card-footer-item');
+          editButton.innerText = 'Edit'
+          editButton.addEventListener('click', () => {
+            let bookId = book.id
+            showEditSection(bookId)
+          })
+          Buttons.appendChild(editButton);
           // Buy the Book button
-          const buyButton = document.createElement('a');
-          buyButton.classList.add('card-footer-item');
-          buyButton.innerText = 'Buy';
-          Buttons.appendChild(buyButton)
+          const deleteButton = document.createElement('a');
+          deleteButton.classList.add('card-footer-item');
+          deleteButton.innerText = 'Delete';
+          Buttons.appendChild(deleteButton)
           
 
           bookCard.appendChild(bookHeading);
