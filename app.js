@@ -2,9 +2,9 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv').config()
 
-// user packages
-const sequelize = require('./util/database');
+const mongoose = require('mongoose');
 
 // routes
 const routes = require('./routes/routes');
@@ -36,13 +36,16 @@ app.use('/', routes);
 
 app.use('/', express.static(__dirname + '/public'));
 
-User.hasMany(Book);
-Book.belongsTo(User);
 
+async function main() {
+    try {
+        await mongoose.connect('mongodb://127.0.0.1:27017/bookhub')
+        console.log('DB connected');
+        app.listen(3000);
+        console.log('Listening...')
+    } catch(e) {
+        console.log(e.message);
+    }
+}
 
-sequelize
-.sync()
-.then(result => {
-    app.listen(3000);
-})
-.catch(err => console.log('Error Running Server > Sequelize Sync Failed'));
+main()

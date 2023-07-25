@@ -2,6 +2,9 @@ const path = require('path');
 const bcrypt  = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const mongoose = require('mongoose')
+const ObjectId = mongoose.Types.ObjectId;
+
 const rootDir = require('../util/path')
 
 const User = require('../models/user');
@@ -18,9 +21,16 @@ const viewController = {
     },
 
     addBook: async (req, res, next) => {
+
         const { name, price, desc, author } = req.body.book;
         try {
-            await req.user.createBook({name: name, description: desc, price: price, author: author})
+            await Book.create({ name: name, 
+                description: desc, 
+                price: price, 
+                author: author, 
+                // owner: new ObjectId(req.session.user.id)
+                owner: new ObjectId(req.user.id)
+            })
             res.status(200).json({success:true})
         } catch(err) {
             console.log(err);
@@ -30,9 +40,7 @@ const viewController = {
 
     listedBooks: async(req, res, next) => {
         try {
-            const listed_books = await Book.findAll({
-                attributes: ['id', 'name', 'description', 'price', 'author']
-            })
+            const listed_books = await Book.find().select('_id name description price author')
             res.status(200).json(listed_books);
         } catch(err) {
             console.log(err)
@@ -42,9 +50,7 @@ const viewController = {
 
     myBooks: async(req, res, next) => {
         try {
-            const booksCreatedByUser = await req.user.getBooks( {
-                attributes: ['id', 'name', 'description', 'price', 'author']
-            })
+            const booksCreatedByUser = await Book.find({ owner: req.user._id }).select('_id name description price author')
             res.status(200).json(booksCreatedByUser);
         } catch(err) {
             console.log(err)
@@ -54,18 +60,17 @@ const viewController = {
 
     editBook: async(req, res, next) => {
         const { name, price, author, description } = req.body;
-        await req.user.setBook({
-            name: name, price: price, author: author, description: description
-        })
-        console.log('suces')
+        // const book = await Book.findById()
+        // await req.user.setBook({
+        //     name: name, price: price, author: author, description: description
+        // })
+        // console.log('suces')
     },
 
     bookDetails: async(req, res, next) => {
         try {
             const bookId = req.body.bookId;
-            const bookDetails = await Book.findOne({
-                where: { id: bookId }
-            })
+            const bookDetails = await Book.findById(bookId)
             res.status(200).json(bookDetails);
         } catch(err) {
             console.log(err)
@@ -120,9 +125,7 @@ const viewController = {
     signInUser: async(req, res, next) => {
         const { email, password } = req.body;
         try {
-            const userExists = await User.findOne( { 
-                where: { email: email } 
-            } );
+            const userExists = await User.findOne( { email: email } );
             if(!userExists) { return res.status(404).json( { error: "User not found" } ) }
             const passwordsMatch = await bcrypt.compare(password, userExists.password);
             if( passwordsMatch ) {

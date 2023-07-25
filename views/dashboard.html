@@ -136,7 +136,7 @@
               viewButton.classList.add('card-footer-item');
               viewButton.innerText = 'Show Details'
               viewButton.addEventListener('click', (e) => {
-                const bookId = book.id;
+                const bookId = book._id;
                 e.preventDefault();
                 showProductDetails(bookId);
               })

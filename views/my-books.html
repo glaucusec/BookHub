@@ -53,7 +53,7 @@
         async function showEditSection(bookId) {
             const modal = document.querySelector('#modal');
             const book = await axios.post('/book-details', { bookId: bookId }, { headers: { 'Content-Type': 'application/json' } })
-
+            console.log(bookId)
             const background = document.createElement('div');
             background.classList.add('modal-background');
             // Header section
@@ -89,6 +89,7 @@
             submitbutton.classList.add('button', 'is-link');
             submitbutton.innerText = 'Submit'
             submitbutton.id = 'submit-button';
+            submitbutton.addEventListener('click', () => alert('hey'))
             submitcontrol.appendChild(submitbutton);
             submitfield.appendChild(submitcontrol);
 
@@ -162,7 +163,7 @@
           editButton.classList.add('card-footer-item');
           editButton.innerText = 'Edit'
           editButton.addEventListener('click', () => {
-            let bookId = book.id
+            let bookId = book._id
             showEditSection(bookId)
           })
           Buttons.appendChild(editButton);

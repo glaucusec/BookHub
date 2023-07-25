@@ -1,28 +1,25 @@
-const Sequelize = require('sequelize');
+const mongoose = require('mongoose');
 
-const sequelize = require('../util/database');
+const Schema = mongoose.Schema
 
-const User = sequelize.define('user', {
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-        allowNull: false
-    }, 
+const userSchema = new Schema({
     name: {
-        type: Sequelize.STRING, 
-        allowNull: false
+        type: String, 
+        required: true
     }, 
     email: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: String,
+        required: true,
+        uppercase: true
     },
     password: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: String,
+        required: true,
+        validate: {
+            validator: v => v.length >= 8,
+            message: `Password length must be >= 8`
+        }
     }
-}, {
-    timestamps: false
 })
 
-module.exports = User;
+module.exports = mongoose.model('User', userSchema);
