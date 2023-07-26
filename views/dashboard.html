@@ -26,7 +26,7 @@
         async function showProductDetails(bookId) {
           const modal = document.querySelector('#modal');
 
-          const book = await axios.post('/book-details', { bookId: bookId }, { headers: { 'Content-Type': 'application/json' } })
+          const book = await axios.post('/bookdetails', { bookId: bookId }, { headers: { 'Content-Type': 'application/json' } })
 
           // Background div
           const background = document.createElement('div');
@@ -93,7 +93,7 @@
             const logoutButton = document.querySelector('#log-out-button');
             logoutButton.addEventListener('click', async(e) => {
               try {
-                const logoutResponse = await axios.post('/sign-out');
+                const logoutResponse = await axios.post('/signout');
                 if(logoutResponse.status && logoutResponse.data.message) {
 
                 }
@@ -113,7 +113,8 @@
             dashboard.data.forEach(book => {
               const bookCol = document.createElement('div')
               bookCol.classList.add('column', 'is-3');
-              const bookCard = document.createElement('card');
+              const bookCard = document.createElement('div');
+              bookCard.classList.add('card');
               // Book Heading
               const bookHeading = document.createElement('header')
               bookHeading.classList.add('card-header')
@@ -142,10 +143,10 @@
               })
               Buttons.appendChild(viewButton);
               // Buy the Book button
-              const buyButton = document.createElement('a');
-              buyButton.classList.add('card-footer-item');
-              buyButton.innerText = 'Buy';
-              Buttons.appendChild(buyButton)
+              const addToCartButton = document.createElement('a');
+              addToCartButton.classList.add('card-footer-item');
+              addToCartButton.innerText = 'Add to Cart';
+              Buttons.appendChild(addToCartButton)
               
 
               bookCard.appendChild(bookHeading);

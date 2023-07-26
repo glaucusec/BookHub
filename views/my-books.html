@@ -52,8 +52,8 @@
         // show the Edit form to edit the details
         async function showEditSection(bookId) {
             const modal = document.querySelector('#modal');
-            const book = await axios.post('/book-details', { bookId: bookId }, { headers: { 'Content-Type': 'application/json' } })
-            console.log(bookId)
+            const book = await axios.post('/bookdetails', { bookId: bookId }, { headers: { 'Content-Type': 'application/json' } })
+  
             const background = document.createElement('div');
             background.classList.add('modal-background');
             // Header section
@@ -75,6 +75,7 @@
             form.id = 'edit-form';
             // book-name field
             const namefield = createInputs('input', 'Name', book.data.name);
+            namefield.id = 'nameInput';
             // book-price field
             const pricefield = createInputs('input', 'Price', book.data.price);
             // book-author field
@@ -89,7 +90,6 @@
             submitbutton.classList.add('button', 'is-link');
             submitbutton.innerText = 'Submit'
             submitbutton.id = 'submit-button';
-            submitbutton.addEventListener('click', () => alert('hey'))
             submitcontrol.appendChild(submitbutton);
             submitfield.appendChild(submitcontrol);
 
@@ -126,21 +126,25 @@
                 e.preventDefault();
                 const editForm = document.querySelector('#edit-form')
                 const editFormData = new FormData(editForm);
-                axios.post('/edit-book', editFormData, {
+                editFormData.set('_id', book.data._id)
+                
+                axios.post('/editbook', editFormData, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                })
+                }).then(res => alert('updated'))
+                .catch(err => alert(err));
             })
         }
 
         const booksList = document.querySelector('#books-list');
 
-        axios.post('/my-books')
+        axios.post('/mybooks')
         .then(res => res.data.forEach(book => {
           const bookCol = document.createElement('div')
           bookCol.classList.add('column', 'is-3');
-          const bookCard = document.createElement('card');
+          const bookCard = document.createElement('div');
+          bookCard.classList.add('card')
           // Book Heading
           const bookHeading = document.createElement('header')
           bookHeading.classList.add('card-header')

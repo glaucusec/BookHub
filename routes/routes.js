@@ -10,28 +10,28 @@ router.get('/dashboard', authenticate.authenticate, controller.dashBoard);
 
 router.get('/books', authenticate.authenticate, controller.listedBooks)
 
-router.get('/add-book', authenticate.authenticate, controller.addBookPage);
+router.get('/addbook', authenticate.authenticate, controller.addBookPage);
 
-router.post('/add-book', authenticate.authenticate, controller.addBook);
+router.post('/addbook', authenticate.authenticate, controller.addBook);
 
-router.get('/my-books', authenticate.authenticate, controller.myBooksPage);
+router.get('/mybooks', authenticate.authenticate, controller.myBooksPage);
 
-router.post('/my-books', authenticate.authenticate, controller.myBooks);
+router.post('/mybooks', authenticate.authenticate, controller.myBooks);
 
-router.post('/edit-book', authenticate.authenticate, controller.editBook);
+router.post('/editbook', authenticate.authenticate, controller.editBook);
 
-router.post('/book-details', controller.bookDetails);
+router.post('/bookdetails', controller.bookDetails);
 
 router.get('/header', controller.headerPage);
 
-router.get('/sign-in', controller.signInPage);
+router.get('/signin', controller.signInPage);
 
-router.post('/sign-in', controller.signInUser);
+router.post('/signin', controller.signInUser);
 
-router.get('/sign-up', controller.signUpPage);
+router.get('/signup', controller.signUpPage);
 
-router.post('/sign-up', controller.signUpUser);
+router.post('/signup', controller.signUpUser);
 
-router.post('/sign-out', controller.signOut);
+router.post('/signout', controller.signOut);
 
 module.exports = router;

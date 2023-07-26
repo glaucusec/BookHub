@@ -3,7 +3,7 @@ const rootDir = require('../util/path');
 const User = require('../models/user');
 
 exports.authenticate = async (req, res, next) => {
-   const user = await User.findById('64ace9c312d8747ec2d19e65').select('_id email')
+   const user = await User.findById('64c0feea063263ad399d625b').select('_id email')
    req.user = { _id: user._id , email: user.email }
    next();
    //  if(req.cookies.session_sid && req.session.user) {

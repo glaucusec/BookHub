@@ -58,7 +58,7 @@
       button.addEventListener('click', (e) => {
         e.preventDefault();
         const formData = new FormData(form);
-        axios.post('/sign-in', formData, {
+        axios.post('/signin', formData, {
           headers: {
             'Content-Type': 'application/json'
           }

@@ -29,7 +29,7 @@ const viewController = {
                 price: price, 
                 author: author, 
                 // owner: new ObjectId(req.session.user.id)
-                owner: new ObjectId(req.user.id)
+                owner: new ObjectId(req.user._id)
             })
             res.status(200).json({success:true})
         } catch(err) {
@@ -59,12 +59,33 @@ const viewController = {
     },
 
     editBook: async(req, res, next) => {
-        const { name, price, author, description } = req.body;
-        // const book = await Book.findById()
-        // await req.user.setBook({
-        //     name: name, price: price, author: author, description: description
-        // })
-        // console.log('suces')
+        const { _id, name, price, author, description } = req.body;
+        
+        try {
+            const book = await Book.findById(_id);
+            // Check user is the owner of book.
+            if(!req.user._id.toString() === book.owner.toString()) {
+                return res.status(403).json({ status: false, message: 'Operation not Allowed' })
+            }
+
+            book.name = name;
+            book.price = price;
+            book.author = author;
+            book.description = description;
+    
+            await book.save();
+            res.status(200).json({ 
+                status : true, 
+                book: {
+                    author: book.author,
+                    name: book.name,
+                    price: book.price,
+                    description: book.description
+                },
+            });
+        } catch(err) {
+            res.status(500).json({ message: 'Internal Server Error', status: false})
+        }
     },
 
     bookDetails: async(req, res, next) => {

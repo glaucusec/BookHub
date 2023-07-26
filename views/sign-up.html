@@ -63,7 +63,7 @@
         button.addEventListener('click', (e) => {
             e.preventDefault();
             const formData = new FormData(form);
-            axios.post('sign-up', formData, {
+            axios.post('signup', formData, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -83,7 +83,7 @@
                     success.appendChild(article);
                     const message = document.querySelector('.message');
                     setTimeout(() => {
-                      document.location = '/sign-in'
+                      document.location = '/signin'
                     }, 3000);
                     document.querySelector('.delete').addEventListener('click', (e) => {
                         e.preventDefault();
